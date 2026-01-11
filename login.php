@@ -1,28 +1,35 @@
 <?php
 session_start();
+include "backend/db.php";
 
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
+if (isset($_POST['login'])) {
+    $stmt = $conn->prepare("SELECT * FROM user WHERE username=? AND password=?");
+    $stmt->execute([$_POST['username'], $_POST['password']]);
 
-$servername = "172.31.15.77";  // Remote MySQL server IP
-$username   = "root";           // MySQL user
-$password   = "Admin@123";               // MySQL password
-$dbname     = "payroll";        // DB name
-
-// Create MySQL Connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check Connection
-if ($conn->connect_error) {
-    die("Connection Failed: " . $conn->connect_error);
+    if ($stmt->rowCount() == 1) {
+        $_SESSION['user'] = $_POST['username'];
+        header("Location: frontend/dashboard.php");
+        exit;
+    } else {
+        $error = "Invalid username or password";
+    }
 }
-
-// Read Form Data
-$user = $_POST['username'];
-$pass = $_POST['password'];
-
-echo "Username: " . $user . "<br>";
-echo "Password: " . $pass . "<br>";
 ?>
-
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payroll Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
+<div class="login-box">
+    <h2>Payroll Login</h2>
+    <form method="post">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button name="login">Login</button>
+        <p style="color:red"><?= $error ?? '' ?></p>
+    </form>
+</div>
+</body>
+</html>
