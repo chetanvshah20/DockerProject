@@ -1,5 +1,5 @@
 <?php
-$Host = "172.31.31.77";
+$Host = "172.31.12.87";
 $Database = "payroll_db";
 $UserName = "root";
 $Password = "Admin@123";
